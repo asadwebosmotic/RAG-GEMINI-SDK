@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from RAG.parsing_and_chunking import extract, chunk_pdfplumber_parsed_data
-from RAG.embedding_and _store import embed_and_store_pdf
+from RAG.embedding_and_store import embed_and_store_pdf
 
 router = APIRouter()
 

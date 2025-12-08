@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from typing import Dict
-from core.dependencies import get_redis_client
 
 router = APIRouter()
 
@@ -8,12 +7,9 @@ router = APIRouter()
 @router.get("/health")
 async def health_check() -> Dict:
     """Health check endpoint"""
-    redis_status = "connected" if get_redis_client() else "disconnected"
-    
     return {
         "status": "healthy",
         "services": {
-            "redis": redis_status,
             "api": "operational"
         }
     }

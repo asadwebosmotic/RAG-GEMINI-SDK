@@ -1,10 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
 from api.exceptions import global_exception_handler, http_exception_handler
-from api.routes import health, chat, pdf
-from core.dependencies import close_redis
+from api.routes import health, chat, pdf, get_pdfs, delete_pdfs
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -34,16 +33,9 @@ app.add_exception_handler(FastAPIHTTPException, http_exception_handler)
 app.include_router(health.router, prefix="/v1", tags=["Health"])
 app.include_router(chat.router, prefix="/v1", tags=["Chat"])
 app.include_router(pdf.router, prefix="/v1", tags=["PDF"])
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    logger.info("Shutting down...")
-    await close_redis()
-
+app.include_router(delete_pdfs.router, prefix="/v1", tags=["PDF"])
+app.include_router(get_pdfs.router, prefix="/v1", tags=["PDF"])
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

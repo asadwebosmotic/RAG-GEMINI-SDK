@@ -12,4 +12,3 @@ class PageText:
 @dataclass
 class PdfExtractionResult:
     pages: List[PageText]
-

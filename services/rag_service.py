@@ -4,16 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue
-from sentence_transformers import SentenceTransformer
+from RAG.embedding_and_store import client as qdrant_client, embed_model
 from config import settings
 
 logger = logging.getLogger(__name__)
-
-# Initialize clients
-qdrant_client = QdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
-embed_model = SentenceTransformer("intfloat/e5-base-v2")
 
 
 async def rag_search(query: str, top_k: int = 5, user_id: str = "anonymous") -> List[Dict]:

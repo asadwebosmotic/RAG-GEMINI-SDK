@@ -26,13 +26,6 @@ if not client.collection_exists("KnowMe_chunks"):
         vectors_config=VectorParams(size=768, distance=Distance.COSINE)
     )
 
-# === Create KnowMe_Profiles collection if not exists ===
-if not client.collection_exists("KnowMe_Profiles"):
-    client.create_collection(
-        collection_name="KnowMe_Profiles",
-        vectors_config=VectorParams(size=768, distance=Distance.COSINE)
-    )
-
 # === Core Function to Embed and Store PDF Data ===
 def embed_and_store_pdf(chunks: List[dict], user_id: str = "anonymous") -> List[PointStruct]:
     """
@@ -72,32 +65,4 @@ def embed_and_store_pdf(chunks: List[dict], user_id: str = "anonymous") -> List[
     client.upsert(collection_name='KnowMe_chunks', points=points)
     logger.info(f"📦 Stored {len(points)} chunks into Qdrant for user {user_id}.")
 
-    return points  # Useful for testing or future chaining (e.g. rerank preview)
-
-def save_user_profile_qdrant(user_id, profile_data):
-    # Convert dict to readable string for embedding
-    profile_text = "\n".join([f"{k}: {v}" for k, v in profile_data.items()])
-    
-    vector = embed_model.encode(profile_text).tolist()
-    
-    point = PointStruct(
-        id=user_id,  # use user_id so you can update it later
-        vector=vector,
-        payload={
-            "user_id": user_id,
-            "profile_text": profile_text,
-            "type": "user_profile"
-        }
-    )
-    
-    client.upsert(collection_name="KnowMe_profiles", points=[point])
-
-def get_user_profile_qdrant(user_id):
-    results = client.scroll(
-        collection_name="KnowMe_profiles",
-        scroll_filter=Filter(must=[FieldCondition(key="user_id", match=MatchValue(value=user_id))]),
-        limit=1
-    )
-    if results[0]:
-        return results[0][0].payload.get("profile_text", "")
-    return ""
+    return points  # Useful for testing or future chaining (e.g. rerank preview
