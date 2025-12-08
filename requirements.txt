@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+google-genai
+qdrant-client
+sentence-transformers
+pdfplumber
+pytesseract
+pdf2image
+Pillow
+llama-parse
+redis
+httpx
+tavily-python
+python-dotenv
