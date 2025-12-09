@@ -12,6 +12,29 @@ Here is a high-level view of how the system works:
 
 ```mermaid
 graph TD
+    User[User / Frontend] -->|API Request| API[FastAPI Backend]
+    API -->|Forward Request| Gemini[Gemini AI Service]
+
+    subgraph "Orchestrator"
+        Gemini -->|Decide Tool| Router{Tool Router}
+    end
+    
+    subgraph "Available Tools"
+        Router -->|Personal Docs| RAG[RAG Tool]
+        Router -->|General Info| Tavily[Tavily Search]
+        Router -->|Weather| Weather[Weather Service]
+        Router -->|Actions| Webhook[Webhook Service]
+    end
+    
+    subgraph "Knowledge Base"
+        RAG -->|Query| VectorDB[Qdrant Vector DB]
+    end
+```
+
+### Visual Architecture
+
+```mermaid
+graph TD
     User[User / Frontend] -->|API Requests| API[FastAPI Backend]
     
     subgraph "Core Services"
@@ -31,12 +54,32 @@ graph TD
     end
 ```
 
+```text
++--------+      +-----------+      +---------------------+
+|  User  | ---> |  FastAPI  | ---> |  Gemini AI Service  |
++--------+      +-----------+      +----------+----------+
+                                              |
+                                     (Decides which tool)
+                                              |
+        +--------------+----------------------+------------------+
+        |              |                      |                  |
+   +---------+   +------------+        +-------------+    +-------------+
+   | RAG Tool|   | Web Search |        | Weather API |    |   Webhook   |
+   +----+----+   +------------+        +-------------+    +-------------+
+        |
+  +-----+-----+
+  | Qdrant DB |
+  +-----------+
+```
+
 ### How it works (The "Simplified" Explanation):
-1.  **You send a message** or upload a PDF to the system.
-2.  **The Brain (Gemini AI)** analyzes your request.
-3.  **The Memory (RAG + Qdrant)** looks through your uploaded documents to find relevant information.
-4.  **The Tools (Tavily/Weather)** allow the AI to look up current events or weather if needed.
-5.  **The Answer**: The system combines what it knows from your documents and the outside world to give you a complete answer.
+1.  **You send a message** to the system.
+2.  **The Orchestrator (Gemini AI)** receives your message and thinks: *"Do I know this answer, or do I need a tool?"*
+3.  **Tool Selection**:
+    *   If you ask about your files => Calls **RAG Tool** (which searches **Qdrant**).
+    *   If you ask about the weather => Calls **Weather Tool**.
+    *   If you ask "Who won the game yesterday?" => Calls **Tavily (Web Search)**.
+4.  **The Answer**: Gemini combines the tool's data with its own intelligence to give you the final response.
 
 ---
 

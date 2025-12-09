@@ -109,6 +109,9 @@ class GeminiService:
         tool_results = []
         max_iterations = 3
         iteration = 0
+        
+        # Initialize token tracker
+        token_tracker = {"total_tokens": 0, "embedding_tokens": 0}
 
         # -----------------------------------------------
         # Tool-calling loop
