@@ -14,13 +14,13 @@ def get_tool_configs() -> List[types.Tool]:
             function_declarations=[
                 types.FunctionDeclaration(
                     name="rag_search",
-                    description="Search through uploaded PDF documents using RAG (Retrieval Augmented Generation). Use this when the user asks questions about uploaded documents or needs information from uploaded PDFs.",
+                    description="Search user's uploaded documents and personal knowledge base. Use for questions about personal information, documents, or content that might be in uploaded PDFs.",
                     parameters=types.Schema(
                         type='OBJECT',
                         properties={
                             "query": types.Schema(
                                 type='STRING',
-                                description="The search query to find relevant information in the PDF documents"
+                                description="The search query to find relevant information in the user's documents"
                             ),
                             "top_k": types.Schema(
                                 type='INTEGER',
@@ -32,7 +32,7 @@ def get_tool_configs() -> List[types.Tool]:
                 ),
                 types.FunctionDeclaration(
                     name="web_search",
-                    description="Search the web for current information, news, or general knowledge. Use this for real-time information, recent events, or information not in uploaded documents.",
+                    description="Search the internet for current information, general knowledge, or topics not in personal documents. Use for famous people, current events, or general questions.",
                     parameters=types.Schema(
                         type='OBJECT',
                         properties={
@@ -68,20 +68,25 @@ def get_tool_configs() -> List[types.Tool]:
                 ),
                 types.FunctionDeclaration(
                     name="send_webhook_event",
-                    description="Send a webhook event to trigger external workflows (e.g., n8n automation). Use this when the user wants to trigger an external action or workflow.",
+                    description=(
+                        "Trigger the webhook immediately. "
+                        "If the user does NOT specify event_type or payload, "
+                        "use default values automatically. "
+                        "Call this function whenever the user asks to 'trigger webhook', "
+                        "'send webhook', 'fire webhook', or similar."),
                     parameters=types.Schema(
                         type='OBJECT',
                         properties={
                             "event_type": types.Schema(
                                 type='STRING',
-                                description="Type of event to trigger (e.g., 'user_action', 'notification', 'task_complete')"
+                                description="Type of event to trigger (default: 'user_action')"
                             ),
                             "payload": types.Schema(
                                 type='OBJECT',
-                                description="Additional data to send with the webhook event"
+                                description="Additional data to send with the webhook event (default: empty dict)"
                             )
                         },
-                        required=["event_type", "payload"]
+                        required=[]  # Nothing is required - both have defaults
                     )
                 )
             ]

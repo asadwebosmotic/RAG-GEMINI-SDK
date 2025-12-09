@@ -1,11 +1,13 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class Settings(BaseSettings):
     # Google Gemini
     GOOGLE_API_KEY: str
-    GEMINI_MODEL: Optional[str] = "gemini-2.5-flash"
+    GEMINI_MODEL: Optional[str] = "gemini-2.0-flash"
     
     # LLaMAParse
     LLAMAPARSE_API_KEY: str
@@ -19,7 +21,7 @@ class Settings(BaseSettings):
     TAVILY_API_KEY: str
     
     # Webhook
-    WEBHOOK_URL: Optional[str] = None
+    WEBHOOK_URL: str
     
     class Config:
         env_file = ".env"
@@ -28,4 +30,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

@@ -39,7 +39,7 @@ async def upload_pdf(
                     "text": page.text,
                     "metadata": {
                         "page_number": page.page_number,
-                        "source": page.filename,
+                        "source": file.filename,
                         "type": "text"
                     }
                 })

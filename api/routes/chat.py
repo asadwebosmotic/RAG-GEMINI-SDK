@@ -12,6 +12,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     text: str
     tool_calls: List[Dict[str, Any]]
+    usage: Dict[str, int]
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -25,7 +26,8 @@ async def chat(request: ChatRequest):
         
         return ChatResponse(
             text=response["text"],
-            tool_calls=response.get("tool_calls", [])
+            tool_calls=response.get("tool_calls", []),
+            usage=response.get("usage", {"total_tokens": 0, "embedding_tokens": 0})
         )
     
     except Exception as e:

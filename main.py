@@ -6,7 +6,15 @@ from api.exceptions import global_exception_handler, http_exception_handler
 from api.routes import health, chat, pdf, get_pdfs, delete_pdfs
 import logging
 
-logging.basicConfig(level=logging.INFO)
+# Enhanced logging configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('rag_gemini_sdk.log', mode='a')
+    ]
+)
 logger = logging.getLogger(__name__)
 
 # Create FastAPI app
